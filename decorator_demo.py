@@ -14,21 +14,11 @@
 # b = f(1)
 # print b
 
-# import datetime
-# now = datetime.datetime.now() - datetime.timedelta(seconds = 3)
-# print now
+import datetime
+unknow_time = datetime.timedelta(seconds = 3)
+print unknow_time
+now_time = datetime.datetime.now()
+print now_time
+now =now_time- unknow_time
+print now
 
-import socket
-import fcntl
-import struct
-def get_ip(ifname):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return socket.inet_ntoa(fcntl.ioctl(
-        s.fileno(),
-        0x8915, # SIOCGIFADDR
-        struct.pack('256s', ifname[:15])
-    )[20:24])
-
-ip = get_ip('eth0')
-
-print ip

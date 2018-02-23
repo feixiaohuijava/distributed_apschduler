@@ -6,13 +6,13 @@ import pymongo
 
 import apscheduler.events
 
-sys.path.append('../src/')
+# sys.path.append('../src/')
 
 import mtxscheduler
 
 sched = mtxscheduler.MutexScheduler()
 
-mongo = pymongo.Connection(host = '127.0.0.1', port = 27017)
+mongo = pymongo.Connection(host = '127.0.0.1', port=27017)
 lock_store = mongo['lockstore']['locks']
 
 def lock():

@@ -1,23 +1,32 @@
 # coding:utf-8
-from apscheduler.scheduler import Scheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 import datetime
 import time
 import socket
 import struct
 import fcntl
+import uuid
 
 def get_ip(ifname):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return socket.inet_ntoa(fcntl.ioctl(
-        s.fileno(),
-        0x8915, # SIOCGIFADDR
-        struct.pack('256s', ifname[:15])
-    )[20:24])
+    """
+    part one for linux
+    part two for mac
+    :param ifname:
+    :return:
+    """
+    # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    # return socket.inet_ntoa(fcntl.ioctl(
+    #     s.fileno(),
+    #     0x8915, # SIOCGIFADDR
+    #     struct.pack('256s', ifname[:15])
+    # )[20:24])
+    mac=uuid.UUID(int = uuid.getnode()).hex[-12:]
+    return ":".join([mac[e:e+2] for e in range(0,11,2)])
 
 
-class MutexScheduler(Scheduler):
+class MutexScheduler(BackgroundScheduler):
     def __init__(self, gconfig={}, **options):
-        Scheduler.__init__(self, gconfig, **options)
+        BackgroundScheduler.__init__(self, gconfig, **options)
         self.ip = get_ip('eth0')
 
     def mutex(self, lock = None, heartbeat = None, lock_else = None,
