@@ -1,3 +1,4 @@
+# coding:utf-8
 from apscheduler.scheduler import Scheduler
 import datetime
 import time
