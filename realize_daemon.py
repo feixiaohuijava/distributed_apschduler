@@ -44,8 +44,11 @@ class CDaemon:
             sys.stderr.write('fork #1 failed: %d (%s)\n' % (e.errno, e.strerror))
             sys.exit(1)
 
+        # 子进程默认继承父进程的工作目录，最好是变更到根目录，否则回影响文件系统的卸载
         os.chdir(self.home_dir)
+        # 让子进程成为新的会话组长和进程组长
         os.setsid()
+        # 子进程默认继承父进程的umask（文件权限掩码），重设为0（完全控制），以免影响程序读写文件
         os.umask(self.umask)
 
         try:
@@ -56,9 +59,11 @@ class CDaemon:
             sys.stderr.write('fork #2 failed: %d (%s)\n' % (e.errno, e.strerror))
             sys.exit(1)
 
+        #刷新缓冲区先，小心使得万年船
         sys.stdout.flush()
         sys.stderr.flush()
 
+        # dup2函数原子化地关闭和复制文件描述符，重定向到/dev/nul，即丢弃所有输入输出
         si = file(self.stdin, 'r')
         so = file(self.stdout, 'a+')
         if self.stderr:
